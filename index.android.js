@@ -13,6 +13,7 @@ import {
     Image,
     ToolbarAndroid
 } from 'react-native';
+import NewsHome from './js/NewsHome.js';
 
 class Solidot extends Component {
     render() {
@@ -22,6 +23,7 @@ class Solidot extends Component {
                     logo={require('image!title')}
                     style={[styles.toolbar]}
                 />
+                <NewsHome/>
             </View>
         );
     }

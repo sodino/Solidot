@@ -11,7 +11,8 @@ import {
     Text,
     View,
     Image,
-    ToolbarAndroid
+    ToolbarAndroid,
+    StatusBar
 } from 'react-native';
 import NewsHome from './js/NewsHome.js';
 
@@ -19,6 +20,7 @@ class Solidot extends Component {
     render() {
         return (
             <View style={styles.container}>
+                <StatusBar backgroundColor='#015851'/>
                 <ToolbarAndroid
                     logo={require('image!title')}
                     style={[styles.toolbar]}

@@ -7,6 +7,7 @@ import {
     Image,
     ListView,
     RefreshControl,
+    TouchableHighlight,
 } from 'react-native';
 import Cheerio from 'cheerio';
 
@@ -17,7 +18,7 @@ export default class NewsHome extends Component {
         var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
         this.state = {
-            dataSource : ds.cloneWithRows(['row 1', 'row 2']),
+            dataSource : ds.cloneWithRows([]),
             refreshing : false,
         };
     }
@@ -28,7 +29,13 @@ export default class NewsHome extends Component {
                 dataSource={this.state.dataSource}
                 renderRow={(rowData)=>{
                     var string = JSON.stringify(rowData);
-                    return <Text>{string}</Text>
+                    return (<View>
+                        <TouchableHighlight onPress={()=>{}}
+                            underlayColor="rgb(210, 230, 255)">
+                            <Text>{string}</Text>
+                        </TouchableHighlight>
+                        <View style={styles.separator}/>
+                    </View>);
                 }}
                 refreshControl={
                     <RefreshControl refreshing={this.state.refreshing}
@@ -121,3 +128,10 @@ export default class NewsHome extends Component {
         });
     }
 }
+
+const styles = StyleSheet.create({
+    separator: {
+        height: StyleSheet.hairlineWidth,
+        backgroundColor: '#015851',
+    },
+});

@@ -28,14 +28,39 @@ export default class NewsHome extends Component {
             <ListView
                 dataSource={this.state.dataSource}
                 renderRow={(rowData)=>{
-                    var string = JSON.stringify(rowData);
-                    return (<View>
+                    return (
                         <TouchableHighlight onPress={()=>{}}
                             underlayColor="rgb(210, 230, 255)">
-                            <Text>{string}</Text>
+                            <View style={styles.articleContainer}>
+                                <View style={styles.container}>
+                                    <Text style={styles.articleTag}>
+                                        {rowData.articleTag}
+                                    </Text>
+                                    <Text style={styles.articleTime}>
+                                        {rowData.articleTime}
+                                    </Text>
+                                </View>
+                                <Text style={styles.articleTitle}>
+                                    {rowData.title}
+                                </Text>
+                                <Text style={styles.articleDescription}>
+                                    {rowData.description}
+                                </Text>
+                                <View style={styles.articleEndContainer}>
+                                    <Text>
+                                        来自
+                                        <Text style={{fontWeight : 'bold', fontSize : 15}}>
+                                            {rowData.from}
+                                        </Text>
+                                    </Text>
+                                    <Text>
+                                        {rowData.comment}条评论
+                                    </Text>
+                                </View>
+                                <View style={styles.separator}/>
+                            </View>
                         </TouchableHighlight>
-                        <View style={styles.separator}/>
-                    </View>);
+                    );
                 }}
                 refreshControl={
                     <RefreshControl refreshing={this.state.refreshing}
@@ -98,11 +123,11 @@ export default class NewsHome extends Component {
             var span = $article.find('span');
             span.each((index, spanItem)=> {
                 if (index == 0) {
-                    dataArticle.tag = $(spanItem).text();
+                    dataArticle.articleTag = $(spanItem).text();
                 } else if (index == 1) {
-                    dataArticle.time = $(spanItem).text();
+                    dataArticle.articleTime = $(spanItem).text();
                 } else if (index == 2) {
-                    dataArticle.from = $(spanItem).text();
+                    dataArticle.from = $(spanItem).text().replace('来自', ''); // '来自'两个字不要了，后续自己添加上
                 }
             });
 
@@ -119,7 +144,10 @@ export default class NewsHome extends Component {
                 if (index == 0) {
                     dataArticle.description = $(divItem).text();
                 } else if (index == 1) {
-                    dataArticle.numComment = $(divItem).find('b').text();
+                    dataArticle.comment = $(divItem).find('b').text();
+                    if ('' === dataArticle.comment) {
+                        dataArticle.comment = '0';
+                    }
                 }
             });
 
@@ -138,4 +166,52 @@ const styles = StyleSheet.create({
         height: StyleSheet.hairlineWidth,
         backgroundColor: '#015851',
     },
+    articleContainer : {
+        flex : 1,
+        flexDirection : 'column',
+        flexWrap : 'wrap'
+    },
+    articleEndContainer : {
+        flex : 1,
+        flexDirection : 'row',
+        flexWrap : 'wrap',
+        justifyContent : 'space-between',
+        padding : 5,
+    },
+    articleTitle : {
+        color : '#48535b',
+        fontSize : 20,
+        paddingTop : 2.5,
+        paddingBottom : 2.5,
+        paddingLeft : 5,
+        paddingRight : 5,
+    },
+    articleDescription : {
+        color : '#48535b',
+        fontSize : 15,
+        paddingTop : 2.5,
+        paddingBottom : 2.5,
+        paddingLeft : 5,
+        paddingRight : 5,
+    },
+    container: {
+        flex: 1,  // 自由拉伸
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        padding : 5,
+    },
+    articleTag : {
+        backgroundColor : '#015851',
+        color : 'white',
+        marginLeft : 5,
+        marginRight : 5,
+    },
+    articleTime : {
+        backgroundColor : '#3a92d9',
+        color : 'white',
+        marginLeft : 5,
+        marginRight : 5,
+    }
 });

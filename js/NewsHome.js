@@ -47,6 +47,10 @@ export default class NewsHome extends Component {
         );
     }
 
+    componentDidMount() {
+        this._onRefresh();
+    }
+
     _onRefresh() {
         this.setState({refreshing : true});
 

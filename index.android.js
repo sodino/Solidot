@@ -12,32 +12,71 @@ import {
     View,
     Image,
     ToolbarAndroid,
-    StatusBar
+    BackAndroid,
+    StatusBar,
+    WebView,
+    Navigator,
 } from 'react-native';
 import NewsHome from './js/NewsHome.js';
+import NewsArticle from './js/NewsArticle.js';
+
+
+var _navigator;
+
+BackAndroid.addEventListener('hardwareBackPress', ()=> {
+    if (!_navigator) {
+        // _navigator未初始化
+        return true;
+    }
+    if (_navigator.getCurrentRoutes().length === 1) {
+        return false;
+    } else {
+        _navigator.pop();
+        return true;
+    }
+});
 
 class Solidot extends Component {
     render() {
         return (
             <View style={styles.container}>
                 <StatusBar backgroundColor='#015851'/>
-                <ToolbarAndroid
-                    logo={require('image!title')}
-                    style={[styles.toolbar]}
+                <Navigator
+                    style={styles.container}
+                    initialRoute={{id: 'Solidot'}}
+                    renderScene={this.navigatorRenderScene.bind(this)}
                 />
-                <NewsHome/>
             </View>
         );
+    }
+
+    navigatorRenderScene(route, navigator) {
+        _navigator = navigator;
+        switch(route.id) {
+            case 'Solidot' :
+                return(<NewsHome/>);
+            case 'article' :
+                return (<NewsArticle/>);
+            case 'web' :
+                return (
+                    <View style={{flex : 1}}>
+                        <ToolbarAndroid style={[styles.toolbar]}
+                                        title={route.title}
+                                        titleColor="white"
+                                        navIcon={{uri: 'back_white_24dp', isStatic : true}}
+                                        onIconClicked={navigator.pop}
+                        ></ToolbarAndroid>
+                        <WebView source={{uri : route.url}}
+                                 javaScriptEnabled={true}/>
+                    </View>
+                );
+        }
     }
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-    },
-    toolbar: {
-        backgroundColor: '#015851',
-        height: 36,
     },
 });
 

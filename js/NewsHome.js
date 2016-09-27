@@ -8,6 +8,7 @@ import {
     ListView,
     RefreshControl,
     TouchableHighlight,
+    ToolbarAndroid,
 } from 'react-native';
 import Cheerio from 'cheerio';
 
@@ -23,51 +24,58 @@ export default class NewsHome extends Component {
         };
     }
 
+    _renderRow(rowData) {
+        return (
+            <TouchableHighlight onPress={()=>{}}
+                                underlayColor="rgb(210, 230, 255)">
+                <View style={styles.articleContainer}>
+                    <View style={styles.container}>
+                        <Text style={styles.articleTag}>
+                            {rowData.articleTag}
+                        </Text>
+                        <Text style={styles.articleTime}>
+                            {rowData.articleTime}
+                        </Text>
+                    </View>
+                    <Text style={styles.articleTitle}>
+                        {rowData.title}
+                    </Text>
+                    <Text style={styles.articleDescription}>
+                        {rowData.description}
+                    </Text>
+                    <View style={styles.articleEndContainer}>
+                        <Text>
+                            来自
+                            <Text style={{fontWeight : 'bold', fontSize : 15}}>
+                                {rowData.from}
+                            </Text>
+                        </Text>
+                        <Text>
+                            {rowData.comment}条评论
+                        </Text>
+                    </View>
+                    <View style={styles.separator}/>
+                </View>
+            </TouchableHighlight>
+        );
+    }
+
     render() {
         return (
-            <ListView
-                dataSource={this.state.dataSource}
-                renderRow={(rowData)=>{
-                    return (
-                        <TouchableHighlight onPress={()=>{}}
-                            underlayColor="rgb(210, 230, 255)">
-                            <View style={styles.articleContainer}>
-                                <View style={styles.container}>
-                                    <Text style={styles.articleTag}>
-                                        {rowData.articleTag}
-                                    </Text>
-                                    <Text style={styles.articleTime}>
-                                        {rowData.articleTime}
-                                    </Text>
-                                </View>
-                                <Text style={styles.articleTitle}>
-                                    {rowData.title}
-                                </Text>
-                                <Text style={styles.articleDescription}>
-                                    {rowData.description}
-                                </Text>
-                                <View style={styles.articleEndContainer}>
-                                    <Text>
-                                        来自
-                                        <Text style={{fontWeight : 'bold', fontSize : 15}}>
-                                            {rowData.from}
-                                        </Text>
-                                    </Text>
-                                    <Text>
-                                        {rowData.comment}条评论
-                                    </Text>
-                                </View>
-                                <View style={styles.separator}/>
-                            </View>
-                        </TouchableHighlight>
-                    );
-                }}
-                refreshControl={
-                    <RefreshControl refreshing={this.state.refreshing}
-                                    onRefresh={this._onRefresh.bind(this)}
-                    />
-                }
-            />
+            <View style={{flex : 1, flexDirection : 'column'}}>
+                <ToolbarAndroid
+                    logo={require('image!title')}
+                    style={[styles.toolbar]}/>
+                <ListView
+                    dataSource={this.state.dataSource}
+                    renderRow={this._renderRow.bind(this)}
+                    refreshControl={
+                        <RefreshControl refreshing={this.state.refreshing}
+                                        onRefresh={this._onRefresh.bind(this)}
+                        />
+                    }
+                />
+            </View>
 
         );
     }
@@ -134,7 +142,7 @@ export default class NewsHome extends Component {
             var h2 = $article.find('h2');
             h2.each((index, h2Item) => {
                 if (index == 0) {
-                    dataArticle.title = $(h2Item).text();
+                    dataArticle.title = $(h2Item).text().replace(/(\r|\n)/g, '');
                     dataArticle.sid = $(h2Item).find('a').attr('href').replace('/story?sid=','');
                 }
             });
@@ -142,7 +150,7 @@ export default class NewsHome extends Component {
             var div = $article.find('div');
             div.each((index, divItem)=>{
                 if (index == 0) {
-                    dataArticle.description = $(divItem).text();
+                    dataArticle.description = $(divItem).text().replace(/(\r|\n)/g, '');
                 } else if (index == 1) {
                     dataArticle.comment = $(divItem).find('b').text();
                     if ('' === dataArticle.comment) {
@@ -164,7 +172,7 @@ export default class NewsHome extends Component {
 const styles = StyleSheet.create({
     separator: {
         height: StyleSheet.hairlineWidth,
-        backgroundColor: '#015851',
+        backgroundColor: '#015351',
     },
     articleContainer : {
         flex : 1,
@@ -203,7 +211,7 @@ const styles = StyleSheet.create({
         padding : 5,
     },
     articleTag : {
-        backgroundColor : '#015851',
+        backgroundColor : '#015351',
         color : 'white',
         marginLeft : 5,
         marginRight : 5,
@@ -213,5 +221,9 @@ const styles = StyleSheet.create({
         color : 'white',
         marginLeft : 5,
         marginRight : 5,
-    }
+    },
+    toolbar: {
+        backgroundColor: '#015351',
+        height: 36,
+    },
 });

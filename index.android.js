@@ -54,7 +54,11 @@ class Solidot extends Component {
         _navigator = navigator;
         switch(route.id) {
             case 'Solidot' :
-                return(<NewsHome/>);
+                return(
+                    <NewsHome
+                        navigator={navigator}
+                    />
+                );
             case 'article' :
                 return (<NewsArticle/>);
             case 'web' :
@@ -77,6 +81,10 @@ class Solidot extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+    },
+    toolbar: {
+        backgroundColor: '#015351',
+        height: 36,
     },
 });
 

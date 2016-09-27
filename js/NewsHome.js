@@ -24,9 +24,17 @@ export default class NewsHome extends Component {
         };
     }
 
+    _clickRow(rowData) {
+        this.props.navigator.push({
+            id : 'web',
+            title : rowData.title,
+            url : 'http://www.solidot.org/story?sid=' + rowData.sid,
+        });
+    }
+
     _renderRow(rowData) {
         return (
-            <TouchableHighlight onPress={()=>{}}
+            <TouchableHighlight onPress={()=>{this._clickRow(rowData)}}
                                 underlayColor="rgb(210, 230, 255)">
                 <View style={styles.articleContainer}>
                     <View style={styles.container}>

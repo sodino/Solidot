@@ -39,8 +39,8 @@ export default class NewsArticle extends Component {
         return (
             <View style={styles.articleContainer}>
                 <View style={{height : 56, flexDirection : 'row', backgroundColor : '#015351', alignItems : 'center', justifyContent:'center'}}>
-                    <Image source={{uri : 'title'}} style={{width : 200, height : 40}}></Image>
-                    <Image source={require('image!back_white_24dp')} style={{position : 'absolute', width : 40, height : 40, alignSelf : 'center', left : 0, top : 8}}></Image>
+                    <Image source={{uri : 'title'}} style={{width : 175, height : 35}}></Image>
+                    <Image source={require('image!back_white_24dp')} style={{position : 'absolute', width : 35, height : 35, alignSelf : 'center', left : 0, top : 8}}></Image>
                 </View>
             </View>
         );

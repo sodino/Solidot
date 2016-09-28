@@ -82,11 +82,12 @@ export default class NewsHome extends Component {
     }
 
     render() {
+
         return (
             <View style={{flex : 1, flexDirection : 'column'}}>
-                <ToolbarAndroid
-                    logo={require('image!title')}
-                    style={[styles.toolbar]}/>
+                <View style={{height : 56, justifyContent : 'center', alignItems:'center', backgroundColor : '#015351'}}>
+                    <Image source={{uri : 'title'}} style={{width : 175, height : 35, }}></Image>
+                </View>
                 <ListView
                     dataSource={this.state.dataSource}
                     renderRow={this._renderRow.bind(this)}

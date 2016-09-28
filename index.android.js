@@ -54,13 +54,12 @@ class Solidot extends Component {
         _navigator = navigator;
         switch(route.id) {
             case 'Solidot' :
-                return(
-                    <NewsHome
-                        navigator={navigator}
-                    />
+                return(<NewsHome navigator={navigator}/>
                 );
             case 'article' :
-                return (<NewsArticle/>);
+                return (<NewsArticle navigator={navigator}
+                                     data={route.data}
+                />);
             case 'web' :
                 return (
                     <View style={{flex : 1}}>

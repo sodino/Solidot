@@ -11,6 +11,7 @@ import {
     ToolbarAndroid,
 } from 'react-native';
 import Cheerio from 'cheerio';
+import api from './api.js';
 
 export default class NewsHome extends Component {
     constructor(props) {
@@ -25,14 +26,26 @@ export default class NewsHome extends Component {
     }
 
     _clickRow(rowData) {
+        // // 使用Web方式打开文章详情页NewsArticle
+        // this.props.navigator.push({
+        //     id : 'web',
+        //     title : rowData.title,
+        //     url : 'http://www.solidot.org/story?sid=' + rowData.sid,
+        // });
+
+        // 启动NArticle
         this.props.navigator.push({
-            id : 'web',
-            title : rowData.title,
-            url : 'http://www.solidot.org/story?sid=' + rowData.sid,
+            id : 'article',
+            data : rowData,
         });
     }
 
     _renderRow(rowData) {
+        let strComment = '';
+        if (rowData.comment != 0){
+            strComment = rowData.comment + "条评论";
+        }
+
         return (
             <TouchableHighlight onPress={()=>{this._clickRow(rowData)}}
                                 underlayColor="rgb(210, 230, 255)">
@@ -59,7 +72,7 @@ export default class NewsHome extends Component {
                             </Text>
                         </Text>
                         <Text>
-                            {rowData.comment}条评论
+                            {strComment}
                         </Text>
                     </View>
                     <View style={styles.separator}/>
@@ -95,7 +108,7 @@ export default class NewsHome extends Component {
     _onRefresh() {
         this.setState({refreshing : true});
 
-        var url = 'http://www.solidot.org/';
+        var url = api.Solidot;
         var headers = new Headers();
         headers.append('User-Agent', '(Android)');
         // Accept:text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
@@ -232,6 +245,6 @@ const styles = StyleSheet.create({
     },
     toolbar: {
         backgroundColor: '#015351',
-        height: 36,
+        height: 56,
     },
 });

@@ -47,10 +47,10 @@ export default class NewsHome extends Component {
                 <View style={styles.articleContainer}>
                     <View style={styles.container}>
                         <Text style={styles.articleTag}>
-                            {rowData.articleTag}
+                            {rowData.tag}
                         </Text>
                         <Text style={styles.articleTime}>
-                            {rowData.articleTime}
+                            {rowData.time}
                         </Text>
                     </View>
                     <Text style={styles.articleTitle}>
@@ -159,9 +159,9 @@ export default class NewsHome extends Component {
             var span = $article.find('span');
             span.each((index, spanItem)=> {
                 if (index == 0) {
-                    dataArticle.articleTag = $(spanItem).text();
+                    dataArticle.tag = $(spanItem).text();
                 } else if (index == 1) {
-                    dataArticle.articleTime = $(spanItem).text();
+                    dataArticle.time = $(spanItem).text();
                 } else if (index == 2) {
                     dataArticle.from = $(spanItem).text().replace('来自', ''); // '来自'两个字不要了，后续自己添加上
                 }

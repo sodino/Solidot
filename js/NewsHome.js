@@ -41,11 +41,6 @@ export default class NewsHome extends Component {
     }
 
     _renderRow(rowData) {
-        let strComment = '';
-        if (rowData.comment != 0){
-            strComment = rowData.comment + "条评论";
-        }
-
         return (
             <TouchableHighlight onPress={()=>{this._clickRow(rowData)}}
                                 underlayColor="rgb(210, 230, 255)">
@@ -71,15 +66,26 @@ export default class NewsHome extends Component {
                                 {rowData.from}
                             </Text>
                         </Text>
-                        <Text>
-                            {strComment}
-                        </Text>
+                        {this._renderComment(rowData.comment)}
                     </View>
                     <View style={styles.separator}/>
                 </View>
             </TouchableHighlight>
         );
     }
+
+    _renderComment(comment) {
+        let strComment = '';
+        if (comment != 0){
+            strComment = comment + "条评论";
+            return (
+                <Text>{strComment}</Text>
+            );
+        } else {
+            return null;
+        }
+    }
+
 
     render() {
 

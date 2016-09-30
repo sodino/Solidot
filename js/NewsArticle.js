@@ -157,7 +157,7 @@ export default class NewsArticle extends Component {
             // 带超链接的文本，需要处理点击事件
             return (<Text style={{textDecorationLine: 'underline'}}
                         onPress={()=>{
-                            this._jumpToWeb.bind(this, href)
+                            this._jumpToWeb(href);
                         }}>
                             {strText}
                         </Text>);

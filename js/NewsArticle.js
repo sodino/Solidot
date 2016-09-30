@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import api from './api.js';
 import Cheerio from 'cheerio';
+import ActualImage from './ActualImage.js';
 
 export default class NewsArticle extends Component {
     constructor(props) {
@@ -172,7 +173,27 @@ export default class NewsArticle extends Component {
         });
     }
 
+    _assembleArticleImage(article) {
+        if (!article.imgs) {
+            return null;
+        }
+        if (article.imgs.length == 0) {
+            return null;
+        }
+
+        var images = [];
+        article.imgs.forEach((imgUrl, index, imgs) => {
+            imgUrl = 'http://img.solidot.org/0/908/litQdmrMFDYvA.png';
+            images.push(
+              <ActualImage source={{uri : imgUrl}}/>
+            );
+        });
+
+        return (<View style={{justifyContent:'center', alignItems:'center', margin : 8}}>{images}</View>);
+    }
+
     render() {
+        var imgContainer = this._assembleArticleImage(this.state.dataArticle);
         var arrTxt = this._assembleArticleContent(this.state.dataArticle);
 
         // TouchableWithoutFeedback没有width height backgroundColor等属性，真难用
@@ -187,6 +208,7 @@ export default class NewsArticle extends Component {
                     </TouchableWithoutFeedback>
                     <Image source={{uri : 'title'}} style={{width : 175, height : 35}}></Image>
                 </View>
+                {imgContainer}
                 <View style={{flex : 1, justifyContent : 'flex-start',}}>
                     <Text key="articleTextContent">
                         {arrTxt}

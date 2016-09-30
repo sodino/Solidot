@@ -84,6 +84,7 @@ export default class NewsArticle extends Component {
 
         this.setState({
             dataArticle:article,
+            refreshing : false,// 取消转圈
         });
         console.log(JSON.stringify(article));
     }
@@ -110,12 +111,7 @@ export default class NewsArticle extends Component {
             })
             .catch((error)=>{
                 console.log('NewsAritcle::_onRefresh() error=%s', error);
-            }).done(()=>{
-            // 取消转圈
-            this.setState({
-                refreshing : false
-            });
-        });
+            }).done();
     }
 
     _cutContent(content, seekTo, keyEnd) {

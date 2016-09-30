@@ -205,7 +205,6 @@ const styles = StyleSheet.create({
     articleContainer : {
         flex : 1,
         flexDirection : 'column',
-        flexWrap : 'wrap'
     },
     articleEndContainer : {
         flex : 1,

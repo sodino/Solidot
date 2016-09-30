@@ -4,12 +4,8 @@ import {
     Text,
     View,
     Image,
-    ToolbarAndroid,
-    BackAndroid,
-    StatusBar,
-    WebView,
-    Navigator,
     TouchableWithoutFeedback,
+    RefreshControl,
     ScrollView,
 } from 'react-native';
 import api from './api.js';
@@ -148,7 +144,7 @@ export default class NewsArticle extends Component {
         }
 
         return (
-            <Text key="articleTextContent" style={{flex : 1, justifyContent : 'flex-start', margin : 8}}>
+            <Text key={arrTxt} style={{flex : 1, justifyContent : 'flex-start', margin : 8}}>
                 {arrTxt}
             </Text>
         );
@@ -157,10 +153,11 @@ export default class NewsArticle extends Component {
     _newText(strText, href) {
         if (!href) {
             // 普通文本
-            return (<Text>{strText}</Text>);
+            return (<Text key={strText}>{strText}</Text>);
         } else {
             // 带超链接的文本，需要处理点击事件
             return (<Text style={{textDecorationLine: 'underline'}}
+                        key={strText}
                         onPress={()=>{
                             this._jumpToWeb(href);
                         }}>
@@ -186,10 +183,9 @@ export default class NewsArticle extends Component {
         }
 
         var images = [];
-        article.imgs.forEach((imgUrl, index, imgs) => {
-            imgUrl = 'http://img.solidot.org/0/908/litQdmrMFDYvA.png';
+        article.imgs.forEach((objImg, index, imgs) => {
             images.push(
-              <ActualImage source={{uri : imgUrl}}/>
+              <ActualImage key={objImg} source={{uri : objImg.img}}/>
             );
         });
 
@@ -212,8 +208,14 @@ export default class NewsArticle extends Component {
                     </TouchableWithoutFeedback>
                     <Image source={{uri : 'title'}} style={{width : 175, height : 35}}></Image>
                 </View>
-                {imgContainer}
-                {txtContainer}
+                <ScrollView style={{flex : 1}}
+                            refreshControl={
+                                <RefreshControl refreshing={this.state.refreshing}
+                                onRefresh={this._onRefresh.bind(this)}/>
+                            }>
+                    {imgContainer}
+                    {txtContainer}
+                </ScrollView>
             </View>
         );
     }

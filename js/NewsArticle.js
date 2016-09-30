@@ -147,7 +147,11 @@ export default class NewsArticle extends Component {
             });
         }
 
-        return arrTxt;
+        return (
+            <Text key="articleTextContent" style={{flex : 1, justifyContent : 'flex-start', margin : 8}}>
+                {arrTxt}
+            </Text>
+        );
     }
 
     _newText(strText, href) {
@@ -194,7 +198,7 @@ export default class NewsArticle extends Component {
 
     render() {
         var imgContainer = this._assembleArticleImage(this.state.dataArticle);
-        var arrTxt = this._assembleArticleContent(this.state.dataArticle);
+        var txtContainer = this._assembleArticleContent(this.state.dataArticle);
 
         // TouchableWithoutFeedback没有width height backgroundColor等属性，真难用
         // onPress直接赋值为navigator.pop，也可以写个函数执行()=>{pop}
@@ -209,11 +213,7 @@ export default class NewsArticle extends Component {
                     <Image source={{uri : 'title'}} style={{width : 175, height : 35}}></Image>
                 </View>
                 {imgContainer}
-                <View style={{flex : 1, justifyContent : 'flex-start',}}>
-                    <Text key="articleTextContent">
-                        {arrTxt}
-                    </Text>
-                </View>
+                {txtContainer}
             </View>
         );
     }

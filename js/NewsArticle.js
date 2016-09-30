@@ -89,10 +89,10 @@ export default class NewsArticle extends Component {
     }
 
     _onRefresh() {
-        this.setState({refreshing : true});
+        this.setState({refreshing: true});
 
-//        var url = api.Article + this.state.dataArticle.sid;
-        var url = api.Article + '49839';
+        var url = api.Article + this.state.dataArticle.sid;
+        //var url = api.Article + '49839';
 
         var headers = new Headers();
         headers.append('User-Agent', '(Android)');

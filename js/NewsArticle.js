@@ -86,7 +86,7 @@ export default class NewsArticle extends Component {
             dataArticle:article,
             refreshing : false,// 取消转圈
         });
-        console.log(JSON.stringify(article));
+        // console.log(JSON.stringify(article));
     }
 
     _onRefresh() {

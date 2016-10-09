@@ -188,8 +188,8 @@ export default class NewsArticle extends Component {
     _onRefresh() {
         this.setState({refreshing: true});
 
-        var url = api.Article + this.state.dataArticle.sid;
-        //var url = api.Article + '49839';
+        // var url = api.Article + this.state.dataArticle.sid;
+        var url = api.Article + '49907';
 
         var headers = new Headers();
         headers.append('User-Agent', '(Android)');
@@ -376,25 +376,53 @@ export default class NewsArticle extends Component {
         }
 
         replys.forEach((reply, index, replys) => {
-            vArray.push(this._newReplyView(reply, level));
+            vArray.push(this._newReplyView(index, reply, level));
             if (reply.nested) {
                 this._assembleArticleReplyList(reply.nested, vArray, level + 1);
             }
         });
 
+        if (level == 0) {
+            // 增加个尾巴，scrollView滑动到末尾时有点空余
+            vArray.push(<View style={{height : 10}} key={'scroll_end'}></View>);
+        }
         return vArray;
     }
 
-    _newReplyView(reply, level) {
+    _newReplyView(index, reply, level) {
+        var borderColor = '#015351';
         var content = reply.content;
         if (reply.title) {
             content = reply.title + '\n' + content;
         }
+        content = content + '\n' + reply.user + '    ' + reply.time;
 
         var marginLeft = 5 + level * 20;
 
+        var marginTop = 0;
+        if (level == 0 && index > 0) {
+            marginTop = 5;
+        }
+
+        var style;
+
+        var styleBase = {
+            marginTop: marginTop,
+            marginLeft: marginLeft,
+            marginRight: 5,
+            borderTopWidth : 1,
+            borderTopColor : borderColor,
+        };
+
+
         return (
-            <Text key={content} style={{marginLeft : marginLeft, marginRight : 5}}>{content}{'\n'}{reply.user}{'   '}{reply.time}</Text>
+            <View style={styleBase}
+                  key={content}
+            >
+                <Text>
+                    {content}
+                </Text>
+            </View>
         );
     }
 

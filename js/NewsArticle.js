@@ -78,7 +78,7 @@ export default class NewsArticle extends Component {
 
         if (seekTo < article.content.length) {
             let endContent = article.content.substr(seekTo);
-            console.log('end=[%s]', endContent);
+            //console.log('end=[%s]', endContent);
             article.aHrefs.push({txt : endContent});
         }
 
@@ -90,7 +90,7 @@ export default class NewsArticle extends Component {
             // 存在评论区
             // console.log('exist comment');
             var arrReply = [];
-            _parseReplyUL($, $replyUL, arrReply);
+            this._parseReplyUL($, $replyUL, arrReply);
 
             // console.log('---- -----');
             // console.log(JSON.stringify(arrReply));
@@ -114,12 +114,31 @@ export default class NewsArticle extends Component {
             $li.children().each((index, item) => {
                 let $item = $(item);
                 if ($item.is('p')) {
-                    _parseReply_p($, $item, li_id, arrReply);
+                    this._parseReply_p($, $item, li_id, arrReply);
                 } else {
-                    _parseReplyNested($, $item, li_id, arrReply);
+                    this._parseReplyNested($, $item, li_id, arrReply);
                 }
             });
         });
+    }
+    _parseReply_p($, $item, id, arrReply) {
+        // 单条评论
+        let content = '';
+        let user = '';
+        let time = '';
+        $item.children().each((index, item) => {
+            let tmp = $(item).text().replace(/(\ |\t|\n|\r)/g, '');
+            if (index == 0) {
+                content = tmp;
+            } else if (index == 1) {
+                user = tmp;
+            } else if (index == 2) {
+                time = tmp;
+            }
+        });
+        // console.log('content=[%s] user=[%s] time=[%s]', content, user, time);
+        let comment_item = {id : id, user : user, time : time, content : content};
+        arrReply.push(comment_item);
     }
 
     _parseReplyNested($, $item, id, arrReply) {
@@ -154,7 +173,7 @@ export default class NewsArticle extends Component {
                 // 不存在，就生成一个
                 arrReply[idx].nested = [];
             }
-            _parseReplyUL($, $item, arrReply[idx].nested);
+            this._parseReplyUL($, $item, arrReply[idx].nested);
         }
     }
 
@@ -179,7 +198,7 @@ export default class NewsArticle extends Component {
                 this._parseHtml(html);
             })
             .catch((error)=>{
-                console.log('NewsAritcle::_onRefresh() error=%s', error);
+                //console.log('NewsAritcle::_onRefresh() error=%s', error);
             }).done();
     }
 
@@ -257,9 +276,34 @@ export default class NewsArticle extends Component {
         return (<View style={{justifyContent:'center', alignItems:'center', margin : 8}}>{images}</View>);
     }
 
+    _assembleArticleHead(article) {
+        var heads = [];
+        heads.push(
+            <View style={styles.container}
+                key={article.tag}>
+                <Text style={styles.articleTag}
+                      key={this.state.dataArticle.tag}>
+                    {this.state.dataArticle.tag}
+                </Text>
+                <Text style={styles.articleTime}
+                      key={this.state.dataArticle.time}>
+                    {this.state.dataArticle.time}
+                </Text>
+            </View>
+        );
+        heads.push(
+            <Text style={styles.articleTitle}
+                  key={this.state.dataArticle.title}>
+                {this.state.dataArticle.title}
+            </Text>
+        );
+        return heads;
+    }
+
     render() {
         var imgContainer = this._assembleArticleImage(this.state.dataArticle);
         var txtContainer = this._assembleArticleContent(this.state.dataArticle);
+        var articleHeads = this._assembleArticleHead(this.state.dataArticle);
 
         // TouchableWithoutFeedback没有width height backgroundColor等属性，真难用
         // onPress直接赋值为navigator.pop，也可以写个函数执行()=>{pop}
@@ -278,6 +322,7 @@ export default class NewsArticle extends Component {
                                 <RefreshControl refreshing={this.state.refreshing}
                                 onRefresh={this._onRefresh.bind(this)}/>
                             }>
+                    {articleHeads}
                     {imgContainer}
                     {txtContainer}
                 </ScrollView>
@@ -304,5 +349,32 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         backgroundColor: '#015351',
         height: 56,
+    },
+    container: {
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        padding : 5,
+    },
+    articleTag : {
+        backgroundColor : '#015351',
+        color : 'white',
+        marginLeft : 5,
+        marginRight : 5,
+    },
+    articleTime : {
+        backgroundColor : '#3a92d9',
+        color : 'white',
+        marginLeft : 5,
+        marginRight : 5,
+    },
+    articleTitle : {
+        color : '#48535b',
+        fontSize : 20,
+        paddingTop : 2.5,
+        paddingBottom : 2.5,
+        paddingLeft : 5,
+        paddingRight : 5,
     },
 });

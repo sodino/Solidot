@@ -34,6 +34,7 @@ export default class NewsArticle extends Component {
             viewCount : 0,
             imgs : [],
             aHrefs : [],
+            replys : null, // []
         };
 
         var $ = Cheerio.load(html);
@@ -91,16 +92,16 @@ export default class NewsArticle extends Component {
             // console.log('exist comment');
             var arrReply = [];
             this._parseReplyUL($, $replyUL, arrReply);
-
+            article.replys = arrReply;
             // console.log('---- -----');
             // console.log(JSON.stringify(arrReply));
         } else {
             //console.log('no comment');
+            article.replys = []; // 空数据
         }
 
-
         this.setState({
-            dataArticle:article,
+            dataArticle: article,
             refreshing : false,// 取消转圈
         });
         // console.log(JSON.stringify(article));
@@ -137,8 +138,8 @@ export default class NewsArticle extends Component {
             }
         });
         // console.log('content=[%s] user=[%s] time=[%s]', content, user, time);
-        let comment_item = {id : id, user : user, time : time, content : content};
-        arrReply.push(comment_item);
+        let reply_item = {id : id, user : user, time : time, content : content};
+        arrReply.push(reply_item);
     }
 
     _parseReplyNested($, $item, id, arrReply) {
@@ -300,11 +301,80 @@ export default class NewsArticle extends Component {
         return heads;
     }
 
+    _assembleArticleViewCount(viewCount) {
+        if (!viewCount) {
+            return null;
+        }
+
+
+        if (viewCount <= 0) {
+            viewCount = 1;
+        }
+
+        return (
+            <Text style={{textAlign: 'right', marginRight : 5}}>本文已被查看{viewCount}次</Text>
+        );
+    }
+
+    _assembleArticleReplySeparatorLine(article) {
+        if (!article.viewCount) {
+            // 还没有拉取数据成功，则不显示分隔线
+            return null;
+        } else {
+            return (
+                <View style={styles.separator}></View>
+            );
+        }
+    }
+
+    _assembleArticleReplyHead(article) {
+        if (article.replys == null) {
+            // 还没拉取到
+            return null;
+        }
+
+        if (article.replys.length > 0) {
+            // 有回复数
+            var arr = [];
+
+            arr.push(
+                <View style={{flexDirection: 'row', justifyContent : 'space-between'}}
+                    key={article.comment}>
+                    <Text style={{marginLeft : 5, fontSize : 20, fontWeight : 'bold'}}>回复</Text>
+                    <Text style={{marginRight : 5, textAlign: 'center'}}><Text style={{fontSize : 20, fontWeight : 'bold'}}>{article.comment}</Text>条评论</Text>
+                </View>
+            );
+
+            arr.push(
+                <Text style={{margin : 5, textAlign: 'center', color : 'white', backgroundColor : '#797979'}}
+                    key={'statement'}>
+                    <Text style={{fontFamily: 'serif', fontWeight: 'bold'}}>声明: </Text>
+                    下面的评论属于其发表者所有，不代表本站的观点和立场，我们不负责他们说什么。
+                </Text>
+            )
+
+            return arr;
+        } else {
+            // 还没有回复
+            // 只显示一个‘回复’
+            return (
+                <Text style={{marginLeft : 5, fontSize : 20, fontWeight : 'bold'}}>回复</Text>
+            );
+        }
+    }
+
+    _assembleArticleReplyList(article) {
+        return null;
+    }
+
     render() {
+        var articleHeads = this._assembleArticleHead(this.state.dataArticle);
         var imgContainer = this._assembleArticleImage(this.state.dataArticle);
         var txtContainer = this._assembleArticleContent(this.state.dataArticle);
-        var articleHeads = this._assembleArticleHead(this.state.dataArticle);
-
+        var txtViewCount = this._assembleArticleViewCount(this.state.dataArticle.viewCount);
+        var vSeparator = this._assembleArticleReplySeparatorLine(this.state.dataArticle);
+        var vReplyHead = this._assembleArticleReplyHead(this.state.dataArticle);
+        var replyList = this._assembleArticleReplyList();
         // TouchableWithoutFeedback没有width height backgroundColor等属性，真难用
         // onPress直接赋值为navigator.pop，也可以写个函数执行()=>{pop}
         return (
@@ -325,6 +395,10 @@ export default class NewsArticle extends Component {
                     {articleHeads}
                     {imgContainer}
                     {txtContainer}
+                    {txtViewCount}
+                    {vSeparator}
+                    {vReplyHead}
+                    {replyList}
                 </ScrollView>
             </View>
         );
@@ -376,5 +450,11 @@ const styles = StyleSheet.create({
         paddingBottom : 2.5,
         paddingLeft : 5,
         paddingRight : 5,
+    },
+    separator: {
+        height: StyleSheet.hairlineWidth,
+        backgroundColor: '#015351',
+        marginLeft : 5,
+        marginRight : 5,
     },
 });

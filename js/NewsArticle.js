@@ -82,11 +82,80 @@ export default class NewsArticle extends Component {
             article.aHrefs.push({txt : endContent});
         }
 
+
+        // 处理评论
+        // 判断是否有评论
+        var $replyUL = $('ul.reply_ul');
+        if ($replyUL.length == 1) {
+            // 存在评论区
+            // console.log('exist comment');
+            var arrReply = [];
+            _parseReplyUL($, $replyUL, arrReply);
+
+            // console.log('---- -----');
+            // console.log(JSON.stringify(arrReply));
+        } else {
+            //console.log('no comment');
+        }
+
+
         this.setState({
             dataArticle:article,
             refreshing : false,// 取消转圈
         });
         // console.log(JSON.stringify(article));
+    }
+
+    _parseReplyUL($, $reply, arrReply) {
+        $reply.children().each((index, item_li) => {
+            let $li = $(item_li);
+            let li_id = $li.attr('id').replace('tree_', '');
+            //console.log('index=%s comment_id=%s', index, li_id);
+            $li.children().each((index, item) => {
+                let $item = $(item);
+                if ($item.is('p')) {
+                    _parseReply_p($, $item, li_id, arrReply);
+                } else {
+                    _parseReplyNested($, $item, li_id, arrReply);
+                }
+            });
+        });
+    }
+
+    _parseReplyNested($, $item, id, arrReply) {
+        if ($item.is('div')) {
+            let title = $item.find('h5').text();
+            let content = $item.find('div.p_text').text().replace(/(\r|\n)/g, '').trim();
+            let user = '';
+            let time = '';
+
+            $item.find('div.talk_time').find('span').each((index, item)=>{
+                let $span = $(item);
+                let tmp = $span.text().replace(/(\r|\n)/g, '').trim();
+                if (index == 0) {
+                    user = tmp;
+                } else if (index == 1) {
+                    time = tmp.replace('发表于', '');
+                }
+            });
+
+            // console.log('title=[%s] content=[%s] usr=[%s] time=[%s]', title, content, user, time);
+            let replyNested = {
+                id: id,
+                title: title,
+                content: content,
+                user: user,
+                time: time,
+            };
+            arrReply.push(replyNested);
+        } else if ($item.is('ul')) {
+            var idx = Math.max(0, arrReply.length -1);
+            if (!arrReply[idx].nested) {
+                // 不存在，就生成一个
+                arrReply[idx].nested = [];
+            }
+            _parseReplyUL($, $item, arrReply[idx].nested);
+        }
     }
 
     _onRefresh() {

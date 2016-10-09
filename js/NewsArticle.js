@@ -18,6 +18,7 @@ export default class NewsArticle extends Component {
     constructor(props) {
         super(props);
         this.tmpReplyCount = 0;
+        this.isMount = false;
         this.state = {
             dataArticle : props.data,
             refreshing : false,
@@ -25,7 +26,12 @@ export default class NewsArticle extends Component {
     }
 
     componentDidMount() {
+        this.isMount = true;
         this._onRefresh();
+    }
+
+    componentWillUnmount () {
+        this.isMount = false;
     }
 
     _parseHtml(html) {
@@ -105,10 +111,12 @@ export default class NewsArticle extends Component {
             article.replys = []; // 空数据
         }
 
-        this.setState({
-            dataArticle: article,
-            refreshing : false,// 取消转圈
-        });
+        if (this.isMount) {
+            this.setState({
+                dataArticle: article,
+                refreshing: false,// 取消转圈
+            });
+        }
         // console.log(JSON.stringify(article));
     }
 
@@ -188,8 +196,8 @@ export default class NewsArticle extends Component {
     _onRefresh() {
         this.setState({refreshing: true});
 
-        // var url = api.Article + this.state.dataArticle.sid;
-        var url = api.Article + '49907';
+        var url = api.Article + this.state.dataArticle.sid;
+        // var url = api.Article + '49907';
 
         var headers = new Headers();
         headers.append('User-Agent', '(Android)');
@@ -289,14 +297,16 @@ export default class NewsArticle extends Component {
         heads.push(
             <View style={styles.container}
                 key={article.tag}>
-                <Text style={styles.articleTag}
-                      key={this.state.dataArticle.tag}>
-                    {this.state.dataArticle.tag}
-                </Text>
-                <Text style={styles.articleTime}
-                      key={this.state.dataArticle.time}>
-                    {this.state.dataArticle.time}
-                </Text>
+                <View style={[styles.articleTag, {borderColor : '#015351', borderRadius : 5, borderWidth : 5, justifyContent:'center', alignItems:'center'}]}>
+                    <Text style={[styles.articleTag, {color : 'white', marginTop : -4}]}>
+                        {this.state.dataArticle.tag}
+                    </Text>
+                </View>
+                <View style={[styles.articleTime, {borderColor : '#3a92d9', borderRadius : 5, borderWidth : 5, justifyContent:'center', alignItems:'center'}]}>
+                    <Text style={[styles.articleTime, {color : 'white', marginTop : -4}]}>
+                        {this.state.dataArticle.time}
+                    </Text>
+                </View>
             </View>
         );
         heads.push(
@@ -410,7 +420,7 @@ export default class NewsArticle extends Component {
             marginTop: marginTop,
             marginLeft: marginLeft,
             marginRight: 5,
-            borderTopWidth : 1,
+            borderTopWidth : StyleSheet.hairlineWidth,
             borderTopColor : borderColor,
         };
 
@@ -495,13 +505,11 @@ const styles = StyleSheet.create({
     },
     articleTag : {
         backgroundColor : '#015351',
-        color : 'white',
         marginLeft : 5,
         marginRight : 5,
     },
     articleTime : {
         backgroundColor : '#3a92d9',
-        color : 'white',
         marginLeft : 5,
         marginRight : 5,
     },

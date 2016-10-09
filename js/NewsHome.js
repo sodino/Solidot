@@ -46,12 +46,16 @@ export default class NewsHome extends Component {
                                 underlayColor="rgb(210, 230, 255)">
                 <View style={styles.articleContainer}>
                     <View style={styles.container}>
-                        <Text style={styles.articleTag}>
-                            {rowData.tag}
-                        </Text>
-                        <Text style={styles.articleTime}>
-                            {rowData.time}
-                        </Text>
+                        <View style={[styles.articleTag, {borderColor : '#015351', borderRadius : 5, borderWidth : 5, justifyContent:'center', alignItems:'center'}]}>
+                            <Text style={[styles.articleTag, {color : 'white', marginTop : -4}]}>
+                                {rowData.tag}
+                            </Text>
+                        </View>
+                        <View style={[styles.articleTime, {borderColor : '#3a92d9', borderRadius : 5, borderWidth : 5, justifyContent:'center', alignItems:'center'}]}>
+                            <Text style={[styles.articleTime, {color : 'white', marginTop : -4}]}>
+                                {rowData.time}
+                            </Text>
+                        </View>
                     </View>
                     <Text style={styles.articleTitle}>
                         {rowData.title}
@@ -240,13 +244,11 @@ const styles = StyleSheet.create({
     },
     articleTag : {
         backgroundColor : '#015351',
-        color : 'white',
         marginLeft : 5,
         marginRight : 5,
     },
     articleTime : {
         backgroundColor : '#3a92d9',
-        color : 'white',
         marginLeft : 5,
         marginRight : 5,
     },

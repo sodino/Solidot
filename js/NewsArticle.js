@@ -363,8 +363,14 @@ export default class NewsArticle extends Component {
         }
     }
 
-    _assembleArticleReplyList(article) {
-        return null;
+    _assembleArticleReplyList(replys) {
+        if (!replys || replys.length == 0) {
+            return null;
+        }
+
+        replys.forEach((reply, index, replys) => {
+            
+        });
     }
 
     render() {
@@ -374,7 +380,7 @@ export default class NewsArticle extends Component {
         var txtViewCount = this._assembleArticleViewCount(this.state.dataArticle.viewCount);
         var vSeparator = this._assembleArticleReplySeparatorLine(this.state.dataArticle);
         var vReplyHead = this._assembleArticleReplyHead(this.state.dataArticle);
-        var replyList = this._assembleArticleReplyList();
+        var replyList = this._assembleArticleReplyList(this.state.dataArticle.replys);
         // TouchableWithoutFeedback没有width height backgroundColor等属性，真难用
         // onPress直接赋值为navigator.pop，也可以写个函数执行()=>{pop}
         return (
@@ -388,6 +394,7 @@ export default class NewsArticle extends Component {
                     <Image source={{uri : 'title'}} style={{width : 175, height : 35}}></Image>
                 </View>
                 <ScrollView style={{flex : 1}}
+                            enableEmptySections = {true}
                             refreshControl={
                                 <RefreshControl refreshing={this.state.refreshing}
                                 onRefresh={this._onRefresh.bind(this)}/>

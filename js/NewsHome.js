@@ -97,6 +97,7 @@ export default class NewsHome extends Component {
                 <ListView
                     dataSource={this.state.dataSource}
                     renderRow={this._renderRow.bind(this)}
+                    enableEmptySections={true}
                     refreshControl={
                         <RefreshControl refreshing={this.state.refreshing}
                                         onRefresh={this._onRefresh.bind(this)}

@@ -13,9 +13,10 @@ import Cheerio from 'cheerio';
 import ActualImage from './ActualImage.js';
 
 export default class NewsArticle extends Component {
+
     constructor(props) {
         super(props);
-
+        this.tmpReplyCount = 0;
         this.state = {
             dataArticle : props.data,
             refreshing : false,
@@ -91,8 +92,11 @@ export default class NewsArticle extends Component {
             // 存在评论区
             // console.log('exist comment');
             var arrReply = [];
+            this.tmpReplyCount = 0;
             this._parseReplyUL($, $replyUL, arrReply);
             article.replys = arrReply;
+            article.comment = this.tmpReplyCount;
+
             // console.log('---- -----');
             // console.log(JSON.stringify(arrReply));
         } else {
@@ -140,6 +144,7 @@ export default class NewsArticle extends Component {
         // console.log('content=[%s] user=[%s] time=[%s]', content, user, time);
         let reply_item = {id : id, user : user, time : time, content : content};
         arrReply.push(reply_item);
+        this.tmpReplyCount ++;
     }
 
     _parseReplyNested($, $item, id, arrReply) {
@@ -168,6 +173,7 @@ export default class NewsArticle extends Component {
                 time: time,
             };
             arrReply.push(replyNested);
+            this.tmpReplyCount ++;
         } else if ($item.is('ul')) {
             var idx = Math.max(0, arrReply.length -1);
             if (!arrReply[idx].nested) {
@@ -363,13 +369,13 @@ export default class NewsArticle extends Component {
         }
     }
 
-    _assembleArticleReplyList(replys) {
+    _assembleArticleReplyList(replys, vArray) {
         if (!replys || replys.length == 0) {
             return null;
         }
 
         replys.forEach((reply, index, replys) => {
-            
+
         });
     }
 
@@ -380,7 +386,8 @@ export default class NewsArticle extends Component {
         var txtViewCount = this._assembleArticleViewCount(this.state.dataArticle.viewCount);
         var vSeparator = this._assembleArticleReplySeparatorLine(this.state.dataArticle);
         var vReplyHead = this._assembleArticleReplyHead(this.state.dataArticle);
-        var replyList = this._assembleArticleReplyList(this.state.dataArticle.replys);
+        var vReplyList = [];
+        vReplyList = this._assembleArticleReplyList(this.state.dataArticle.replys, vReplyList);
         // TouchableWithoutFeedback没有width height backgroundColor等属性，真难用
         // onPress直接赋值为navigator.pop，也可以写个函数执行()=>{pop}
         return (
@@ -405,7 +412,7 @@ export default class NewsArticle extends Component {
                     {txtViewCount}
                     {vSeparator}
                     {vReplyHead}
-                    {replyList}
+                    {vReplyList}
                 </ScrollView>
             </View>
         );

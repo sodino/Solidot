@@ -411,7 +411,7 @@ export default class NewsArticle extends Component {
         // TouchableWithoutFeedback没有width height backgroundColor等属性，真难用
         // onPress直接赋值为navigator.pop，也可以写个函数执行()=>{pop}
         return (
-            <View>
+            <View style={{backgroundColor : 'white'}}>
                 <View style={{height : 56, flexDirection : 'row', backgroundColor : '#015351', alignItems : 'center', justifyContent:'center'}}>
                     <TouchableWithoutFeedback onPress={this.props.navigator.pop}>
                         <Image source={require('image!back_white_24dp')}

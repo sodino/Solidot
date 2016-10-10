@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import Cheerio from 'cheerio';
 import api from './api.js';
+import Titlebar from './titlebar/titlebar.js';
 
 export default class NewsHome extends Component {
     constructor(props) {
@@ -92,12 +93,11 @@ export default class NewsHome extends Component {
 
 
     render() {
-
         return (
             <View style={{flex : 1, flexDirection : 'column'}}>
-                <View style={{height : 56, justifyContent : 'center', alignItems:'center', backgroundColor : '#015351'}}>
-                    <Image source={{uri : 'title'}} style={{width : 175, height : 35, }}></Image>
-                </View>
+                <Titlebar navigator={this.props.navigator}
+                          isNeedBack={false}
+                />
                 <ListView
                     dataSource={this.state.dataSource}
                     renderRow={this._renderRow.bind(this)}

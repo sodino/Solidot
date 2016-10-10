@@ -12,6 +12,7 @@ import {
 import api from './api.js';
 import Cheerio from 'cheerio';
 import ActualImage from './ActualImage.js';
+import Titlebar from './titlebar/titlebar.js';
 
 export default class NewsArticle extends Component {
 
@@ -480,14 +481,9 @@ export default class NewsArticle extends Component {
         // onPress直接赋值为navigator.pop，也可以写个函数执行()=>{pop}
         return (
             <View style={{backgroundColor : 'white'}}>
-                <View style={{height : 56, flexDirection : 'row', backgroundColor : '#015351', alignItems : 'center', justifyContent:'center'}}>
-                    <TouchableWithoutFeedback onPress={this.props.navigator.pop}>
-                        <Image source={require('image!back_white_24dp')}
-                               style={{width : 35, height : 35, alignSelf : 'center', position : 'absolute', left : 5, top : 10}}
-                        ></Image>
-                    </TouchableWithoutFeedback>
-                    <Image source={{uri : 'title'}} style={{width : 175, height : 35}}></Image>
-                </View>
+                <Titlebar navigator={this.props.navigator}
+                          isNeedBack={true}
+                />
                 <ScrollView style={{height : scrollHeight}}
                             enableEmptySections = {true}
                             refreshControl={

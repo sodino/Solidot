@@ -357,7 +357,7 @@ export default class NewsArticle extends Component {
             arr.push(
                 <View style={{flexDirection: 'row', justifyContent : 'space-between'}}
                     key={article.comment}>
-                    <Text style={{marginLeft : 5, fontSize : 20, fontWeight : 'bold'}}>回复</Text>
+                    <Text style={{marginLeft : 5, fontSize : 20, fontWeight : 'bold'}} onPress={this._replyArticle.bind(this, article)}>回复</Text>
                     <Text style={{marginRight : 5, textAlign: 'center'}}><Text style={{fontSize : 20, fontWeight : 'bold'}}>{article.comment}</Text>条评论</Text>
                 </View>
             );
@@ -375,9 +375,39 @@ export default class NewsArticle extends Component {
             // 还没有回复
             // 只显示一个‘回复’
             return (
-                <Text style={{marginLeft : 5, fontSize : 20, fontWeight : 'bold'}}>回复</Text>
+                <Text style={{marginLeft : 5, fontSize : 20, fontWeight : 'bold'}}  onPress={this._replyArticle.bind(this, article)}>回复</Text>
             );
         }
+    }
+
+    _replyArticle(article) {
+        console.log('----------replyArticle() sid=' + article.sid);
+
+        var title = encodeURIComponent('标题03');
+        var content = encodeURIComponent('正文03正文03');
+        // var pid = 0;
+        var pid = 251964;
+        fetch("http://www.solidot.org/comments/ajax", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                // 'User-Agent' : 'Mozilla/5.0 (Linux; U; Android 2.3.6; en-us; Nexus S Build/GRK39F) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1',
+                'User-Agent' : '(Android)',
+            },
+            body: 'subject=' + title + '&comment='+ content + '&sid=49926&pid=' + pid + '&type=story&op=submit',
+        }).then(function(response) {
+            // var json = response.json();
+            var txt = response.text();
+            // var v = response.blob();
+            console.log('response.text=' + JSON.stringify(response.json()));
+            if (response.ok) {
+                console.log("Perfect! Your settings are saved.");
+            } else if (response.status == 401) {
+                console.log("Oops! You are not authorized.");
+            }
+        }, function(e) {
+            console.log("Error submitting form!");
+        });
     }
 
     _assembleArticleReplyList(replys, vArray, level) {

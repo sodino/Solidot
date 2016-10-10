@@ -5,13 +5,14 @@ import {
     View,
     Image,
     TouchableWithoutFeedback,
+    TouchableHighlight,
     RefreshControl,
     ScrollView,
     Dimensions,
 } from 'react-native';
 import api from './api.js';
 import Cheerio from 'cheerio';
-import ActualImage from './ActualImage.js';
+import ActualImage from './ui/ActualImage.js';
 import Titlebar from './titlebar/titlebar.js';
 
 export default class NewsArticle extends Component {
@@ -358,7 +359,7 @@ export default class NewsArticle extends Component {
             arr.push(
                 <View style={{flexDirection: 'row', justifyContent : 'space-between'}}
                     key={article.comment}>
-                    <Text style={{marginLeft : 5, fontSize : 20, fontWeight : 'bold'}} onPress={this._replyArticle.bind(this, article)}>回复</Text>
+                    {this._newReplyButton(article)}
                     <Text style={{marginRight : 5, textAlign: 'center'}}><Text style={{fontSize : 20, fontWeight : 'bold'}}>{article.comment}</Text>条评论</Text>
                 </View>
             );
@@ -375,10 +376,25 @@ export default class NewsArticle extends Component {
         } else {
             // 还没有回复
             // 只显示一个‘回复’
-            return (
-                <Text style={{marginLeft : 5, fontSize : 20, fontWeight : 'bold'}}  onPress={this._replyArticle.bind(this, article)}>回复</Text>
-            );
+            return this._newReplyButton(article);
         }
+    }
+
+    _newReplyButton(article) {
+        return (
+            <TouchableHighlight onPress={this._jump2reply.bind(this, article)}
+                underlayColor="rgb(210, 230, 255)"
+                style={{marginLeft: 5, marginRight: 5, borderRadius : 5, alignItems : 'center'}}>
+                <Text style={{fontSize: 20, fontWeight: 'bold'}}>回复</Text>
+            </TouchableHighlight>
+        );
+    }
+
+    _jump2reply(article) {
+        this.props.navigator.push({
+            id: 'reply',
+            article : article,
+        });
     }
 
     _replyArticle(article) {

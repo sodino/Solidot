@@ -19,6 +19,7 @@ import {
 } from 'react-native';
 import NewsHome from './js/NewsHome.js';
 import NewsArticle from './js/NewsArticle.js';
+import NewsReply from './js/NewsReply.js';
 
 
 var _navigator;
@@ -60,6 +61,11 @@ class Solidot extends Component {
                 return (<NewsArticle navigator={navigator}
                                      data={route.data}
                 />);
+            case 'reply' :
+                return (
+                    <NewsReply navigator={navigator}
+                           article={route.article}/>
+                );
             case 'web' :
                 return (
                     <View style={{flex : 1}}>

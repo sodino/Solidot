@@ -144,11 +144,11 @@ export default class NewsArticle extends Component {
         let time = '';
         $item.children().each((index, item) => {
             if (index == 0) {
-                content = $(item).text().replace(/(\ |\t|\n|\r)/g, '');
+                content = $(item).text().replace(/(\t|\n|\r)/g, '').trim();
             } else if (index == 1) {
-                user = $(item).text().replace(/(\ |\t|\n|\r)/g, '');
+                user = $(item).text().replace(/(\t|\n|\r)/g, '').trim();
             } else if (index == 2) {
-                time = $(item).text().replace(/(\t|\n|\r)/g, '');
+                time = $(item).text().replace(/(\t|\n|\r)/g, '').trim();
             }
         });
         // console.log('content=[%s] user=[%s] time=[%s]', content, user, time);
@@ -393,36 +393,6 @@ export default class NewsArticle extends Component {
         this.props.navigator.push({
             id: 'reply',
             article : article,
-        });
-    }
-
-    _replyArticle(article) {
-        console.log('----------replyArticle() sid=' + article.sid);
-
-        var title = encodeURIComponent('标题03');
-        var content = encodeURIComponent('正文03正文03');
-        // var pid = 0;
-        var pid = 251964;
-        fetch("http://www.solidot.org/comments/ajax", {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-                // 'User-Agent' : 'Mozilla/5.0 (Linux; U; Android 2.3.6; en-us; Nexus S Build/GRK39F) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1',
-                'User-Agent' : '(Android)',
-            },
-            body: 'subject=' + title + '&comment='+ content + '&sid=49926&pid=' + pid + '&type=story&op=submit',
-        }).then(function(response) {
-            // var json = response.json();
-            var txt = response.text();
-            // var v = response.blob();
-            console.log('response.text=' + JSON.stringify(response.json()));
-            if (response.ok) {
-                console.log("Perfect! Your settings are saved.");
-            } else if (response.status == 401) {
-                console.log("Oops! You are not authorized.");
-            }
-        }, function(e) {
-            console.log("Error submitting form!");
         });
     }
 

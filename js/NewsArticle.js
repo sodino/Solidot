@@ -143,13 +143,12 @@ export default class NewsArticle extends Component {
         let user = '';
         let time = '';
         $item.children().each((index, item) => {
-            let tmp = $(item).text().replace(/(\ |\t|\n|\r)/g, '');
             if (index == 0) {
-                content = tmp;
+                content = $(item).text().replace(/(\ |\t|\n|\r)/g, '');
             } else if (index == 1) {
-                user = tmp;
+                user = $(item).text().replace(/(\ |\t|\n|\r)/g, '');
             } else if (index == 2) {
-                time = tmp;
+                time = $(item).text().replace(/(\t|\n|\r)/g, '');
             }
         });
         // console.log('content=[%s] user=[%s] time=[%s]', content, user, time);

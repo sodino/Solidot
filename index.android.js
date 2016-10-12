@@ -20,6 +20,7 @@ import {
 import NewsHome from './js/NewsHome.js';
 import NewsArticle from './js/NewsArticle.js';
 import NewsReply from './js/NewsReply.js';
+import EventEmitter from 'EventEmitter';
 
 
 var _navigator;
@@ -38,6 +39,11 @@ BackAndroid.addEventListener('hardwareBackPress', ()=> {
 });
 
 class Solidot extends Component {
+    constructor(props) {
+        super(props);
+        this.eventEmitter = new EventEmitter();
+    }
+
     render() {
         return (
             <View style={styles.container}>
@@ -55,16 +61,21 @@ class Solidot extends Component {
         _navigator = navigator;
         switch(route.id) {
             case 'Solidot' :
-                return(<NewsHome navigator={navigator}/>
+                return(<NewsHome navigator={navigator}
+                                 eventEmitter={this.eventEmitter}
+                    />
                 );
             case 'article' :
                 return (<NewsArticle navigator={navigator}
                                      data={route.data}
+                                     eventEmitter={this.eventEmitter}
                 />);
             case 'reply' :
                 return (
                     <NewsReply navigator={navigator}
-                           article={route.article}/>
+                           article={route.article}
+                           eventEmitter={this.eventEmitter}
+                    />
                 );
             case 'web' :
                 return (

@@ -15,6 +15,7 @@ import Cheerio from 'cheerio';
 import ActualImage from './ui/ActualImage.js';
 import Titlebar from './titlebar/titlebar.js';
 
+
 export default class NewsArticle extends Component {
 
     constructor(props) {
@@ -25,6 +26,13 @@ export default class NewsArticle extends Component {
             dataArticle : props.data,
             refreshing : false,
         };
+
+        this.props.eventEmitter.addListener('replyArticle', (data) =>{
+            // console.log('NewsArticle result=' + data.result + ' sid=' + data.sid);
+            if (this.state.dataArticle.sid === data.sid && data.result === true) {
+                this._onRefresh();// 再去刷新一次
+            }
+        })
     }
 
     componentDidMount() {
@@ -34,6 +42,7 @@ export default class NewsArticle extends Component {
 
     componentWillUnmount () {
         this.isMount = false;
+        this.props.eventEmitter.removeListener('replyArticle');
     }
 
     _parseHtml(html) {
@@ -104,7 +113,10 @@ export default class NewsArticle extends Component {
             this.tmpReplyCount = 0;
             this._parseReplyUL($, $replyUL, arrReply);
             article.replys = arrReply;
-            article.comment = this.tmpReplyCount;
+            if (article.comment != this.tmpReplyCount) {
+                article.comment = this.tmpReplyCount;
+            }
+            this.props.eventEmitter.emit('updateReplyCount', {sid : article.sid, comment : article.comment});
 
             // console.log('---- -----');
             // console.log(JSON.stringify(arrReply));

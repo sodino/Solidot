@@ -13,17 +13,63 @@ import {
 import Cheerio from 'cheerio';
 import api from './api.js';
 import Titlebar from './titlebar/titlebar.js';
+import EventEmitter from 'EventEmitter';
 
 export default class NewsHome extends Component {
     constructor(props) {
         super(props);
 
-        var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+        var ds = new ListView.DataSource({
+            rowHasChanged:this._listRowHasChanged,
+        });
 
         this.state = {
             dataSource : ds.cloneWithRows([]),
             refreshing : false,
         };
+
+        this.props.eventEmitter.addListener('updateReplyCount', (data)=>{
+            // console.log('Home updateReplyCount() sid=' + data.sid + ' comment=' + data.comment);
+            this.state.dataSource._dataBlob.s1.some((item, index, array)=> {
+                // console.log('index=' + index + ' sid=' + item.sid); // if (data.sid == item.sid) {
+                if (data.sid == item.sid) {
+                    if (data.comment != item.comment) {
+                        // 不相等时才需要更新
+                        array[index] = {
+                            ...array[index],
+                            comment : data.comment,
+                            changed : true,  // 标识需要更新本行
+                        }
+                        // console.log('index=' + index + ' sid=' + item.sid + ' new comment=' + item.comment);
+                        this.setState({
+                            dataSource : this.state.dataSource.cloneWithRows(array),
+                        });
+                    }
+                    return true;
+                } else {
+                    return false;
+                }
+            });
+        });
+    }
+
+    _listRowHasChanged(prevRowData, nextRowData) {
+        var changed = false;
+
+        if (prevRowData !== nextRowData) {
+            changed = true;
+        }
+        if (prevRowData.changed) {
+            changed = true;
+            prevRowData.changed = false; // 恢复为初始状态
+        }
+
+        console.log('_listRowHasChanged() r1.sid=' + prevRowData.sid + ' comment=' + prevRowData.comment + ' r2.sid=' + nextRowData.sid + ' comment=' + nextRowData.comment + " changed=" + changed);
+        return changed;
+    }
+
+    componentWillUnmount () {
+        this.props.eventEmitter.removeListener('updateReplyCount');
     }
 
     _clickRow(rowData) {

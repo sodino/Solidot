@@ -86,6 +86,10 @@ export default class NewsReply extends Component {
                 if (!result){
                     ToastAndroid.show('发布失败' + '\n' + msg, ToastAndroid.SHORT);
                 } else {
+                    this.props.eventEmitter.emit('replyArticle', {
+                        result : true,
+                        sid : this.props.article.sid,
+                    });
                     this.props.navigator.pop();
                 }
             });

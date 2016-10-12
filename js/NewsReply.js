@@ -15,7 +15,7 @@ import api from './api.js';
 export default class NewsReply extends Component {
     constructor(props) {
         super(props);
-        this.title = '';
+        // this.title = '';
         this.content = '';
         this.state = {
             isReplying : false,
@@ -26,10 +26,11 @@ export default class NewsReply extends Component {
         if (this.state.isReplying) {
             return;
         }
-        console.log('title=' + this.title + ' content=' + this.content);
+        // console.log('title=' + this.title + ' content=' + this.content);
+        console.log('content=' + this.content);
 
-        if (this.title.length == 0 && this.content.length == 0) {
-            ToastAndroid.show('标题或评论正文不能同时为空', ToastAndroid.SHORT);
+        if (this.content.length == 0) {
+            ToastAndroid.show('评论正文不能同时为空', ToastAndroid.SHORT);
             return;
         }
 
@@ -37,7 +38,7 @@ export default class NewsReply extends Component {
             isReplying : true,
         });
 
-        var body = encodeURIComponent(this.title + '.' + this.content);
+        var body = encodeURIComponent(this.content);
 
         this._replyArticle.bind(this, body, this.props.article.sid)();
 
@@ -123,11 +124,6 @@ export default class NewsReply extends Component {
                           onRightPress={this._onPostReply.bind(this)}
                 />
                 {this._showIndicator(this.state.isReplying)}
-                <Text style={{color : color, fontSize: 20, marginLeft : 5, marginRight : 5}}>标题</Text>
-                <TextInput editable={!this.state.isReplying}
-                           style={{marginLeft : 5, marginRight : 5, }}
-                           onChangeText={(value) => {this.title = value;}}
-                />
                 <Text style={{color : color, fontSize: 20, marginLeft : 5}}>评论正文</Text>
                 <AutoExpandingTextInput
                     editable={!this.state.isReplying}

@@ -327,8 +327,9 @@ export default class NewsHome extends Component {
 
         datas.push({otherDate : true});
 
+
         if (this.listView) {
-            // this.listView.scrollTo({x : 0, y : -this.yOffset, animated : true});
+            // scrollTo要在setState()之前才有效果。
             this.listView.scrollTo({x : 0, y : 0, animated : false});
         }
 

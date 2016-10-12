@@ -8,12 +8,12 @@ import {
     ListView,
     RefreshControl,
     TouchableHighlight,
-    ToolbarAndroid,
+    DatePickerAndroid,
+    ToastAndroid,
 } from 'react-native';
 import Cheerio from 'cheerio';
 import api from './api.js';
 import Titlebar from './titlebar/titlebar.js';
-import EventEmitter from 'EventEmitter';
 
 export default class NewsHome extends Component {
     constructor(props) {
@@ -22,6 +22,7 @@ export default class NewsHome extends Component {
         var ds = new ListView.DataSource({
             rowHasChanged:this._listRowHasChanged,
         });
+        // this.yOffset = 0;
 
         this.state = {
             dataSource : ds.cloneWithRows([]),
@@ -39,7 +40,7 @@ export default class NewsHome extends Component {
                             ...array[index],
                             comment : data.comment,
                             changed : true,  // 标识需要更新本行
-                        }
+                        };
                         // console.log('index=' + index + ' sid=' + item.sid + ' new comment=' + item.comment);
                         this.setState({
                             dataSource : this.state.dataSource.cloneWithRows(array),
@@ -51,6 +52,14 @@ export default class NewsHome extends Component {
                 }
             });
         });
+
+        this.nowDate = new Date();// 后续会从服务器的headers中获取
+        this.dateArticlePool = {}; // 存储各个日期的文章
+        this.currentArticleDate = {
+            year : 0,
+            month : 0,
+            day : 0,
+        };
     }
 
     _listRowHasChanged(prevRowData, nextRowData) {
@@ -73,13 +82,6 @@ export default class NewsHome extends Component {
     }
 
     _clickRow(rowData) {
-        // // 使用Web方式打开文章详情页NewsArticle
-        // this.props.navigator.push({
-        //     id : 'web',
-        //     title : rowData.title,
-        //     url : 'http://www.solidot.org/story?sid=' + rowData.sid,
-        // });
-
         // 启动NArticle
         this.props.navigator.push({
             id : 'article',
@@ -87,7 +89,7 @@ export default class NewsHome extends Component {
         });
     }
 
-    _renderRow(rowData) {
+    _renderArticleRow(rowData) {
         return (
             <TouchableHighlight onPress={()=>{this._clickRow(rowData)}}
                                 underlayColor="rgb(210, 230, 255)">
@@ -125,6 +127,66 @@ export default class NewsHome extends Component {
         );
     }
 
+    _choiceOtherDate = async () => {
+        // var k1 = '2015';
+        // var k2 = '0505';
+        // var k = k1 + k2;
+        //
+        // nowDate[k] = k;
+        // console.log('---------------' + nowDate[k]);
+
+        var options = {
+            minDate : new Date(2006, 10, 21),  // 最早的文章地址
+            maxDate : this.nowDate,
+            date : new Date(this.currentArticleDate.year, this.currentArticleDate.month, this.currentArticleDate.day),
+        };
+        try {
+            var {action, year, month, day} = await DatePickerAndroid.open(options);
+            month = month + 1;
+            console.log('_choiceOtherDate() action=' + action + ' year=' + year + ' month=' + month + ' day=' + day);
+
+            if (action == DatePickerAndroid.dateSetAction) {
+                if (year === this.currentArticleDate.year
+                    && month === this.currentArticleDate.month
+                    && day === this.currentArticleDate.day
+                ) {
+                    ToastAndroid.show('当前已是' + year + '-' + month + '-' + day + '的文章', ToastAndroid.SHORT);
+                } else {
+                    var selectedDate = new Date(year, month, day);
+                    var selectedDateStr = '' + year + '' + (month < 10?('0' + month) : month) + (day < 10 ? ('0' + day) : day);
+                    this._onRefresh({
+                        string : selectedDateStr,
+                        year : year,
+                        month : month,
+                        day : day,
+                    })
+                }
+            } else {
+                // do nothing
+            }
+        } catch ({code, message}) {
+            console.log('_choiceOtherDate() error. code=' + code + " msg=" + message);
+        }
+    };
+
+    _renderOtherDate() {
+        return (
+            <TouchableHighlight onPress={this._choiceOtherDate}
+                                underlayColor="rgb(210, 230, 255)"
+                                style={{marginLeft: 5, marginRight: 5, borderRadius : 5, alignItems : 'center'}}>
+                <Text style={{fontSize: 20, fontWeight: 'bold', margin : 10}}>往日的文章</Text>
+            </TouchableHighlight>
+        );
+    }
+
+    _renderRow(rowData) {
+        if (rowData.otherDate) {
+            return this._renderOtherDate();
+        } else {
+            return this._renderArticleRow(rowData);
+        }
+    }
+
     _renderComment(comment) {
         let strComment = '';
         if (comment != 0){
@@ -137,6 +199,9 @@ export default class NewsHome extends Component {
         }
     }
 
+    // _onScroll(event) {
+    //     this.yOffset = event.nativeEvent.contentOffset.y;
+    // }
 
     render() {
         return (
@@ -144,7 +209,7 @@ export default class NewsHome extends Component {
                 <Titlebar navigator={this.props.navigator}
                           isNeedBack={false}
                 />
-                <ListView
+                <ListView ref={component => this.listView = component}
                     dataSource={this.state.dataSource}
                     renderRow={this._renderRow.bind(this)}
                     enableEmptySections={true}
@@ -163,10 +228,16 @@ export default class NewsHome extends Component {
         this._onRefresh();
     }
 
-    _onRefresh() {
+    _onRefresh(reqDate) {
         this.setState({refreshing : true});
 
-        var url = api.Solidot;
+        var url;
+
+        if (!reqDate) {
+            url = api.Solidot;
+        } else {
+            url = api.Date + reqDate.string;
+        }
         var headers = new Headers();
         headers.append('User-Agent', '(Android)');
         // Accept:text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
@@ -177,6 +248,18 @@ export default class NewsHome extends Component {
 
         fetch(request)
             .then((response)=>{
+                var strDate = response.headers.get('date');
+                this.nowDate = new Date(strDate);
+                if (!reqDate) {
+                    // 获取当前真实日期信息
+                    this.currentArticleDate = {
+                        year : this.nowDate.getFullYear(),
+                        month : this.nowDate.getMonth() + 1,
+                        day : this.nowDate.getDate(),
+                    }
+                } else {
+                    this.currentArticleDate = reqDate;
+                }
                 return response.text();
             })
             .then((html)=>{
@@ -242,9 +325,18 @@ export default class NewsHome extends Component {
             datas.push(dataArticle);
         });
 
-        this.setState({
-            dataSource : this.state.dataSource.cloneWithRows(datas),
-        });
+        datas.push({otherDate : true});
+
+        if (this.listView) {
+            // this.listView.scrollTo({x : 0, y : -this.yOffset, animated : true});
+            this.listView.scrollTo({x : 0, y : 0, animated : false});
+        }
+
+        // if (this.yOffset == 0) {
+            this.setState({
+                dataSource : this.state.dataSource.cloneWithRows(datas),
+            });
+        // }
     }
 }
 

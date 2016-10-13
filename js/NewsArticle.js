@@ -9,11 +9,13 @@ import {
     RefreshControl,
     ScrollView,
     Dimensions,
+    NativeModules,
 } from 'react-native';
 import api from './api.js';
 import Cheerio from 'cheerio';
 import ActualImage from './ui/ActualImage.js';
 import Titlebar from './titlebar/titlebar.js';
+var {StartWebBrowser} = NativeModules;
 
 
 export default class NewsArticle extends Component {
@@ -280,11 +282,12 @@ export default class NewsArticle extends Component {
     }
 
     _jumpToWeb(href) {
-        this.props.navigator.push({
-            id: 'web',
-            url: href,
-            title: 'Referer URL',
-        });
+        // this.props.navigator.push({
+        //     id: 'web',
+        //     url: href,
+        //     title: 'Referer URL',
+        // });
+        StartWebBrowser.start(href);
     }
 
     _assembleArticleImage(article) {

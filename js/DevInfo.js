@@ -7,17 +7,22 @@ import {
     TouchableHighlight,
     ToastAndroid,
     ScrollView,
+    NativeModules,
 } from 'react-native';
-import Cheerio from 'cheerio';
-import api from './api.js';
 import Titlebar from './titlebar/titlebar.js';
+var {StartWebBrowser} = NativeModules;
 
 export default class DevInfo extends Component {
     constructor(props) {
         super(props);
     }
 
+    _jumpToWeb(href) {
+        StartWebBrowser.start(href);
+    }
+
     render() {
+        var href = 'http://sodino.com/about';
         return(
             <View style={{flex : 1, flexDirection : 'column', backgroundColor : 'white',}}>
                 <Titlebar navigator={this.props.navigator}
@@ -28,6 +33,7 @@ export default class DevInfo extends Component {
                     <Text style={{textDecorationLine: 'line-through'}}>帐号登录</Text>
                     <Text style={{fontStyle: 'italic',textDecorationLine: 'none'}}>(沟通中...)</Text>
                     {this._getAboutText(1)}
+                    <Text style={{textDecorationLine : 'underline', color : 'blue'}} onPress={this._jumpToWeb.bind(this, href)}>{href}</Text>
                 </Text>
             </View>
         );
@@ -38,7 +44,7 @@ export default class DevInfo extends Component {
             case 0:
                 return ('\t\t本应用为个人开发者抓取solidot的网站内容再排版布局而成，并非solidot官方应用。\n\n\t\t目前支持的功能：\n\t\t\t● 首页信息流\n\t\t\t● 往日的文章\n\t\t\t● 文章详情\n\t\t\t● 评论文章(匿名)\n\t\t\t● ');
             case 1:
-                return ('\n\n\t\t个人开发者\t：\tsodino\n\t\t开发者信息\t：\thttp://sodino.com/about');
+                return ('\n\n\t\t个人开发者\t：\tsodino\n\t\t开发者信息\t：\t');
         }
     }
 }

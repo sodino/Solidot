@@ -136,9 +136,9 @@ export default class NewsHome extends Component {
         // console.log('---------------' + nowDate[k]);
 
         var options = {
-            minDate : new Date(2006, 10, 21),  // 最早的文章地址
+            minDate : new Date(2006, 10 -1, 21),  // 最早的文章地址 2006.10.21
             maxDate : this.nowDate,
-            date : new Date(this.currentArticleDate.year, this.currentArticleDate.month, this.currentArticleDate.day),
+            date : new Date(this.currentArticleDate.year, this.currentArticleDate.month -1, this.currentArticleDate.day),
         };
         try {
             var {action, year, month, day} = await DatePickerAndroid.open(options);
@@ -203,11 +203,19 @@ export default class NewsHome extends Component {
     //     this.yOffset = event.nativeEvent.contentOffset.y;
     // }
 
+    _jump2info() {
+        this.props.navigator.push({
+            id :'devInfo'
+        });
+    }
+
     render() {
         return (
             <View style={{flex : 1, flexDirection : 'column'}}>
                 <Titlebar navigator={this.props.navigator}
                           isNeedBack={false}
+                          rightIcon={require('image!info')}
+                          onRightPress={this._jump2info.bind(this)}
                 />
                 <ListView ref={component => this.listView = component}
                     dataSource={this.state.dataSource}

@@ -20,6 +20,7 @@ import {
 import NewsHome from './js/NewsHome.js';
 import NewsArticle from './js/NewsArticle.js';
 import NewsReply from './js/NewsReply.js';
+import DevInfo from './js/DevInfo.js';
 import EventEmitter from 'EventEmitter';
 
 
@@ -77,18 +78,9 @@ class Solidot extends Component {
                            eventEmitter={this.eventEmitter}
                     />
                 );
-            case 'web' :
+            case 'devInfo' :
                 return (
-                    <View style={{flex : 1}}>
-                        <ToolbarAndroid style={[styles.toolbar]}
-                                        title={route.title}
-                                        titleColor="white"
-                                        navIcon={{uri: 'back_white_24dp', isStatic : true}}
-                                        onIconClicked={navigator.pop}
-                        ></ToolbarAndroid>
-                        <WebView source={{uri : route.url}}
-                                 javaScriptEnabled={true}/>
-                    </View>
+                    <DevInfo navigator={navigator}/>
                 );
         }
     }

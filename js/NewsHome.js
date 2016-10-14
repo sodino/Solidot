@@ -275,11 +275,13 @@ export default class NewsHome extends Component {
             })
             .catch((error)=>{
                 console.log('onRefresh() error=%s', error);
-            }).done(()=>{
-                // 取消转圈
-                this.setState({
-                    refreshing : false
-                });
+                ToastAndroid.show('联网失败...', ToastAndroid.SHORT);
+            }).done(()=> {
+            // 取消转圈
+            this.setState({
+                refreshing: false
+            });
+
         });
     }
 

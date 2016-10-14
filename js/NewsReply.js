@@ -78,7 +78,11 @@ export default class NewsReply extends Component {
             console.log('_replyArticle() code=' + respJson.code + ' data=' + respJson.data + ' msg=' + respJson.msg);
             result = (respJson.code == 10000); // 10000为发布成功
             msg = JSON.stringify(respJson);
-        }).catch((error) => {console.log('_replyArticle() error=%s', error);})
+        }).catch((error) => {
+                console.log('_replyArticle() error=%s', error);
+                ToastAndroid.show('联网失败...', ToastAndroid.SHORT);
+            }
+        )
         .finally(()=>{
                 this.setState({
                     isReplying : false,

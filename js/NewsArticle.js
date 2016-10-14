@@ -9,6 +9,7 @@ import {
     RefreshControl,
     ScrollView,
     Dimensions,
+    ToastAndroid,
     NativeModules,
 } from 'react-native';
 import api from './api.js';
@@ -231,6 +232,7 @@ export default class NewsArticle extends Component {
             })
             .catch((error)=>{
                 //console.log('NewsAritcle::_onRefresh() error=%s', error);
+                ToastAndroid.show('联网失败...', ToastAndroid.SHORT);
             }).done();
     }
 

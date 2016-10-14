@@ -24,6 +24,7 @@ export default class NewsArticle extends Component {
         super(props);
         this.tmpReplyCount = 0;
         this.isMount = false;
+        this.preReplyItem; // 在构建评论列表时标识上一条构建的评论组件
         this.state = {
             dataArticle : props.data,
             refreshing : false,
@@ -34,7 +35,7 @@ export default class NewsArticle extends Component {
             if (this.state.dataArticle.sid === data.sid && data.result === true) {
                 this._onRefresh();// 再去刷新一次
             }
-        })
+        });
     }
 
     componentDidMount() {
@@ -453,16 +454,26 @@ export default class NewsArticle extends Component {
             borderTopColor : borderColor,
         };
 
+        var preString;
+        if (this.preReplyItem) {
+            preString = this.preReplyItem.props.style.marginLeft;
+        } else {
+            preString = 'none';
+        }
+        console.log('index=' + index + ' level=' + level + ' pre=' + preString);
 
-        return (
+        var key = index + ' reply ' + level; // 避免评论内容是一样的导致key相同
+        this.preReplyItem = (
             <View style={styleBase}
-                  key={content}
+                  key={key}
             >
                 <Text>
                     {content}
                 </Text>
             </View>
         );
+
+        return this.preReplyItem;
     }
 
     render() {

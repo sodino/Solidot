@@ -15,7 +15,7 @@ import api from './api.js';
 import Cheerio from 'cheerio';
 import ActualImage from './ui/ActualImage.js';
 import Titlebar from './titlebar/titlebar.js';
-var {StartWebBrowser} = NativeModules;
+import StartWebBrowser from './StartWebBrowser.js';
 
 
 export default class NewsArticle extends Component {

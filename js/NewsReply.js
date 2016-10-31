@@ -65,13 +65,7 @@ export default class NewsReply extends Component {
         var result = false;
         var msg = '';
         fetch(api.Comment, {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-                // 'User-Agent' : 'Mozilla/5.0 (Linux; U; Android 2.3.6; en-us; Nexus S Build/rrGRK39F) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1',
-                'User-Agent' : '(Android)',
-            },
-            body: 'subject=' + replyBody + '&comment=rt&sid=' + sid + '&pid=' + pid + '&type=story&op=submit',
+            // 往solidot写操作的代码就不直接公开的，如果是有心人肯定能找得到的...good luck
         }).then((response)=>{
             return response.json();
         }).then((respJson)=>{

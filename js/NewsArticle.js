@@ -16,7 +16,7 @@ import api from './api.js';
 import Cheerio from 'cheerio';
 import ActualImage from './ui/ActualImage.js';
 import Titlebar from './titlebar/titlebar.js';
-import StartWebBrowser from './StartWebBrowser.js';
+import StartWebBrowser from './native/StartWebBrowser.js';
 
 
 export default class NewsArticle extends Component {

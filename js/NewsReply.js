@@ -38,6 +38,8 @@ export default class NewsReply extends Component {
             isReplying : true,
         });
 
+        this.content = this.content + "----Android[奇客IT资讯]";
+
         var body = encodeURIComponent(this.content);
 
         this._replyArticle.bind(this, body, this.props.article.sid)();

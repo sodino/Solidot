@@ -5,6 +5,7 @@ import com.facebook.react.bridge.JavaScriptModule;
 import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.uimanager.ViewManager;
+import com.solidot.bridge.AppInfo;
 import com.solidot.bridge.StartWebBrowser;
 
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ public class SolidotReactPackage implements ReactPackage {
     public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
         List<NativeModule> modules = new ArrayList<>();
         modules.add(new StartWebBrowser(reactContext));
+        modules.add(new AppInfo(reactContext));
         return modules;
     }
 

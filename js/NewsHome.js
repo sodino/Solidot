@@ -62,7 +62,10 @@ export default class NewsHome extends Component {
         };
     }
 
-    _listRowHasChanged(prevRowData, nextRowData) {
+    _listRowHasChanged(r1, r2) {
+
+
+        // _listRowHasChanged(prevRowData, nextRowData) {
         var changed = false;
 
         if (prevRowData !== nextRowData) {
